@@ -3,11 +3,11 @@
 
 #include <QMainWindow>
 #include <QTcpSocket>
-#include <QFileSystemModel>
 #include <QTreeWidgetItem>
 #include <QDir>
 #include <QList>
 
+#include "pdfsfilesystemmodel.h"
 #include "serverconnect.h"
 #include "loginheader.h"
 
@@ -22,7 +22,7 @@ class PDFS_Client : public QMainWindow
 private:
     QTcpSocket *Client;
     LoginHeader tcpHeader;
-    QFileSystemModel *model;
+    PDFSFileSystemModel *fileSystemModel;
 
 public:
     PDFS_Client(QWidget *parent = nullptr);
@@ -31,7 +31,6 @@ public:
 private slots:
     void on_ServerConnect_clicked();
     void on_Login_clicked();
-
     void on_FileTree_itemClicked(QTreeWidgetItem *item, int column);
 
 private:

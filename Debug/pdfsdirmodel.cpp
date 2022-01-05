@@ -41,19 +41,19 @@ void PDFSDirModel::SetSHACode(char* SHA)
         shaCode[i]=SHA[i];
 }
 
-RSC PDFSDirModel::AddDir(PDFSDirModel &NewDir)
+RSC PDFSDirModel::AddDir(PDFSDirModel *NewDir)
 {
-    if(dirList.contains(NewDir.dirName))
+    if(dirList.contains(NewDir->dirName))
         return run_DirExist;
-    dirList[NewDir.dirName]=NewDir;
+    dirList[NewDir->dirName]=NewDir;
     return run_NoError;
 }
 
-RSC PDFSDirModel::AddFile(PDFSFileModel &NewFile)
+RSC PDFSDirModel::AddFile(PDFSFileModel *NewFile)
 {
-    if(fileList.contains(NewFile.FileName()))
+    if(fileList.contains(NewFile->FileName()))
         return run_FileExist;
-    fileList[NewFile.FileName()]=NewFile;
+    fileList[NewFile->FileName()]=NewFile;
     return run_NoError;
 }
 
@@ -67,7 +67,41 @@ void PDFSDirModel::DelFile(QString FileName)
     fileList.erase((fileList.find(FileName)));
 }
 
-QString PDFSDirModel::DirName() { return dirName; }
+PDFSDirModel *PDFSDirModel::Dir(QString DirName)
+{
+    return dirList[DirName];
+}
 
+QList<QStringList> PDFSDirModel::AllFile()
+{
+    QList<QStringList> allFile;
+    QStringList temp;
+    for(auto fileEle:fileList)
+    {
+        temp.clear();
+        temp.push_back(fileEle->FileName());
+        temp.push_back(fileEle->FileType());
+        temp.push_back(QString("%llu").arg(fileEle->FileSize())+"KB");
+        allFile.append(temp);
+    }
+    return allFile;
+}
+
+QList<QStringList> PDFSDirModel::AllDir()
+{
+    QList<QStringList> allDir;
+    QStringList temp;
+    for(auto dirEle:dirList)
+    {
+        temp.clear();
+        temp.push_back(dirEle->DirName());
+        temp.push_back("<DIR>");
+        temp.push_back("--");
+        allDir.append(temp);
+    }
+    return allDir;
+}
+
+QString PDFSDirModel::DirName() { return dirName; }
 QString PDFSDirModel::CreateDate() { return createDate; }
 const char* PDFSDirModel::SHA() { return shaCode; }

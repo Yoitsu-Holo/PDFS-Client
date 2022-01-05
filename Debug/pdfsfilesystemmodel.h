@@ -18,6 +18,9 @@ public:
     PDFSFileSystemModel();
 
 public:
+    void TEST();
+    void StepInDir(QString DirName);
+    QList<QStringList> GetFileSystemStruct();
 };
 
 #endif // PDFSFILESYSTEMMODEL_H

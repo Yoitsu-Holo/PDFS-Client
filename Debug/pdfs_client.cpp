@@ -13,11 +13,15 @@ PDFS_Client::PDFS_Client(QWidget *parent)
     //ui->FileTree->setColumnHidden(0,true);
     QList<QString> headerName;
     headerName.append("FileName");
-    headerName.append("Size");
-    headerName.append("Create data");
+    headerName.append("FileType");
+    headerName.append("FileSize");
     ui->FileTree->setHeaderLabels(headerName);
     QList<QTreeWidgetItem *> items;
-    for (int i = 0; i < 10; ++i)
+    //qDebug("Hello");
+    //fileSystemModel->TEST();
+    //QList<QStringList> fileStruct = fileSystemModel->GetFileSystemStruct();
+    //for (auto && fileEle:fileStruct)
+    for(int i=0;i<10;i++)
     {
         QStringList sl;
         sl.append(QString("item: %1").arg(i));
