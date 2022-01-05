@@ -10,14 +10,12 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    PDFSFileSystem.cpp \
     ligin.cpp \
     loginheader.cpp \
     logout.cpp \
     main.cpp \
     pdfs_client.cpp \
-    pdfsdirmodel.cpp \
-    pdfsfilemodel.cpp \
-    pdfsfilesystemmodel.cpp \
     serverconnect.cpp
 
 HEADERS += \
@@ -25,9 +23,6 @@ HEADERS += \
     loginheader.h \
     logout.h \
     pdfs_client.h \
-    pdfsdirmodel.h \
-    pdfsfilemodel.h \
-    pdfsfilesystemmodel.h \
     protocol.h \
     serverconnect.h
 
