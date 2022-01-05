@@ -28,10 +28,6 @@ public:
     size_t FileSize();
 
 public:
-    bool friend operator < (PDFSFileModel A,PDFSFileModel B)
-    {
-        return A.fileName<B.fileName;
-    }
 };
 
 #endif // PDFSFILEMODEL_H

@@ -17,8 +17,8 @@ PDFS_Client::PDFS_Client(QWidget *parent)
     headerName.append("FileSize");
     ui->FileTree->setHeaderLabels(headerName);
     QList<QTreeWidgetItem *> items;
-    //qDebug("Hello");
-    //fileSystemModel->TEST();
+    qDebug("Hello");
+    fileSystemModel->TEST();
     //QList<QStringList> fileStruct = fileSystemModel->GetFileSystemStruct();
     //for (auto && fileEle:fileStruct)
     for(int i=0;i<10;i++)

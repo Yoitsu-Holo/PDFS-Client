@@ -2,7 +2,6 @@
 #define PDFSDIRMODEL_H
 
 #include <QMap>
-#include <algorithm>
 
 #include "pdfsfilemodel.h"
 #include "protocol.h"
@@ -19,8 +18,8 @@ private:
     bool haveDir;
     bool sorted;
 
-    QMap<QString,PDFSFileModel*> fileList;
-    QMap<QString,PDFSDirModel*> dirList;
+    QMap<QString,PDFSFileModel> fileList;
+    QMap<QString,PDFSDirModel> dirList;
 
 public:
     PDFSDirModel();
@@ -28,24 +27,20 @@ public:
     void ChangeDate(short YY, short MM, short DD);
     void ChangeDirName(QString NewFileName);
     void SetSHACode(char* SHA);
-    RSC AddDir(PDFSDirModel *NewDir);
-    RSC AddFile(PDFSFileModel *NewFile);
+    RSC AddDir(PDFSDirModel NewDir);
+    RSC AddFile(PDFSFileModel NewFile);
     void DelDir(QString DirName);
     void DelFile(QString FileName);
 
 public:
-    QString DirName();
-    QString CreateDate();
-    PDFSDirModel *Dir(QString DirName);
+    QString DirName()const;
+    QString CreateDate()const;
+    PDFSDirModel Dir(QString DirName);
     QList<QStringList> AllFile();
     QList<QStringList> AllDir();
     const char* SHA();
 
 public:
-    bool friend operator < (PDFSDirModel A,PDFSDirModel B)
-    {
-        return A.dirName<B.dirName;
-    }
 };
 
 #endif // PDFSDirMODEL_H

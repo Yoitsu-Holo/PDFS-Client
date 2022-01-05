@@ -18,18 +18,19 @@ void PDFSFileSystemModel::TEST()
         newFile = new PDFSFileModel;
         newDir->SetDirInfo(QChar(i+'a'),2022,1,5,shacode);
         newFile->SetFileInfo("File"+QString(QChar(i+'0')) ,2022,1,5,shacode,i);
-        now->AddDir(newDir);
-        now->AddFile(newFile);
+        now->AddDir(*newDir);
+        qDebug("next");
+        now->AddFile(*newFile);
     }
-    now=now->Dir("a");
+    now=now->Dir(QString("a"));
     for(int i=0;i<5;i++)
     {
         newDir = new PDFSDirModel;
         newFile = new PDFSFileModel;
         newDir->SetDirInfo(QChar(i+'a'),2022,1,5,shacode);
         newFile->SetFileInfo("File"+QString(QChar(i+'0')) ,2022,1,5,shacode,i);
-        now->AddDir(newDir);
-        now->AddFile(newFile);
+        now->AddDir(*newDir);
+        now->AddFile(*newFile);
     }
     now=root;
 }

@@ -8,6 +8,7 @@ PDFSDirModel::PDFSDirModel()
     isRoot = haveFile = haveDir = sorted = false;
     fileList.clear();
     dirList.clear();
+
 }
 
 void PDFSDirModel::SetDirInfo(QString DirName, short YY, short MM, short DD, char* SHA)
@@ -41,19 +42,21 @@ void PDFSDirModel::SetSHACode(char* SHA)
         shaCode[i]=SHA[i];
 }
 
-RSC PDFSDirModel::AddDir(PDFSDirModel *NewDir)
+RSC PDFSDirModel::AddDir(PDFSDirModel NewDir)
 {
-    if(dirList.contains(NewDir->dirName))
+    qDebug("%s", qPrintable(NewDir.createDate));
+    QString key=NewDir.DirName();
+    if(dirList.contains(key))
         return run_DirExist;
-    dirList[NewDir->dirName]=NewDir;
+    dirList[key]=NewDir;
     return run_NoError;
 }
 
-RSC PDFSDirModel::AddFile(PDFSFileModel *NewFile)
+RSC PDFSDirModel::AddFile(PDFSFileModel NewFile)
 {
-    if(fileList.contains(NewFile->FileName()))
+    if(fileList.find(NewFile.FileName())!=fileList.end())
         return run_FileExist;
-    fileList[NewFile->FileName()]=NewFile;
+    fileList[NewFile.FileName()]=NewFile;
     return run_NoError;
 }
 
@@ -67,7 +70,7 @@ void PDFSDirModel::DelFile(QString FileName)
     fileList.erase((fileList.find(FileName)));
 }
 
-PDFSDirModel *PDFSDirModel::Dir(QString DirName)
+PDFSDirModel PDFSDirModel::Dir(QString DirName)
 {
     return dirList[DirName];
 }
@@ -79,9 +82,9 @@ QList<QStringList> PDFSDirModel::AllFile()
     for(auto fileEle:fileList)
     {
         temp.clear();
-        temp.push_back(fileEle->FileName());
-        temp.push_back(fileEle->FileType());
-        temp.push_back(QString("%llu").arg(fileEle->FileSize())+"KB");
+        temp.push_back(fileEle.FileName());
+        temp.push_back(fileEle.FileType());
+        temp.push_back(QString("%llu").arg(fileEle.FileSize())+"KB");
         allFile.append(temp);
     }
     return allFile;
@@ -94,7 +97,7 @@ QList<QStringList> PDFSDirModel::AllDir()
     for(auto dirEle:dirList)
     {
         temp.clear();
-        temp.push_back(dirEle->DirName());
+        temp.push_back(dirEle.DirName());
         temp.push_back("<DIR>");
         temp.push_back("--");
         allDir.append(temp);
@@ -102,6 +105,6 @@ QList<QStringList> PDFSDirModel::AllDir()
     return allDir;
 }
 
-QString PDFSDirModel::DirName() { return dirName; }
-QString PDFSDirModel::CreateDate() { return createDate; }
+QString PDFSDirModel::DirName() const { return dirName; }
+QString PDFSDirModel::CreateDate() const { return createDate; }
 const char* PDFSDirModel::SHA() { return shaCode; }
