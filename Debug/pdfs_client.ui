@@ -143,9 +143,7 @@
         <item>
          <widget class="QTreeWidget" name="FileTree">
           <property name="font">
-           <font>
-            <family>Consolas</family>
-           </font>
+           <font/>
           </property>
           <column>
            <property name="text">

@@ -13,10 +13,9 @@ public:
 
 private:
     char op;
-    char userNameLength;
+    char key[keyLength];
     QString userName;
     QString password;
-
     QByteArray header;
     QString rawHeader;
 
@@ -29,7 +28,8 @@ public:
     QString get_RawHeader();
 
 private:
-    void rebuildHeader();
+    void rebuildKeyHeader();
+    void rebuildLoginHeader();
 };
 
 #endif // LOGINHEADER_H

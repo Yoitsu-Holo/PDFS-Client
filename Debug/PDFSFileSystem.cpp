@@ -1,171 +1,184 @@
-#include <map>
 #include <vector>
-#include <string>
 #include <cstring>
+#include <QMap>
+#include <QString>
+#include <QStringList>
+#include <QList>
 
 #include "protocol.h"
 
 namespace file_inner_struct
 {
-    using namespace std;
-    class PDFS_File
+using namespace std;
+class PDFS_File
+{
+private:
+    QString filename;
+    QString filetype;
+    size_t filesize;
+    char sha[32];
+
+public:
+    PDFS_File() : filename(""), filetype(""), filesize(0), sha()
     {
-    private:
-        string filename;
-        string filetype;
-        size_t filesize;
-        char sha[32];
+        memset(sha, 0x0, sizeof(sha));
+    }
 
-    public:
-        PDFS_File() : filename(""), filetype(""), filesize(0), sha()
-        {
-            memset(sha, 0x0, sizeof(sha));
-        }
-
-        PDFS_File(string RawFileName, size_t FileSize, char *SHA)
-        {
-            int pos = RawFileName.length();
-            for (pos--; pos >= 0; pos--)
-                if (RawFileName[pos] == '.')
-                    break;
-
-            filename = "";
-            filetype = "";
-
-            if (pos == -1)
-                filename = RawFileName,
-                filetype = "unknow";
-            else
-                for (int i = 0; i < (int)RawFileName.length(); i++)
-                    if (i < pos)
-                        filename += RawFileName[i];
-                    else if (i > pos)
-                        filetype += RawFileName[i];
-
-            filesize = FileSize;
-            memcpy(sha, SHA, 32);
-        }
-
-        void setFileName(string FileName) { filename = FileName; }
-        void setFileType(string FileType) { filetype = FileType; }
-        void setFileSize(size_t FileSize) { filesize = FileSize; }
-        void setSHAcode(char *SHA) { memcpy(sha, SHA, 32); }
-        void setFileInfo(string RawFileName, size_t FileSize, char *SHA)
-        {
-            PDFS_File tempFile(RawFileName, FileSize, SHA);
-            *this = tempFile;
-        }
-
-        string getFileName() { return filename; }
-        string getFileType() { return filetype; }
-        size_t getFileSize() { return filesize; }
-        const char *getSHA() { return sha; }
-    };
-
-    class PDFS_Dir
+    PDFS_File(QString RawFileName, size_t FileSize, char *SHA)
     {
-    private:
-        map<string, PDFS_Dir *> ListDir;
-        map<string, PDFS_File *> ListFile;
-        string dirname;
-        PDFS_Dir *prePath;
-        char sha[32];
+        int pos = RawFileName.length();
+        for (pos--; pos >= 0; pos--)
+            if (RawFileName[pos] == '.')
+                break;
 
-    public:
-        PDFS_Dir() : ListDir(), ListFile(), dirname(""), prePath(NULL), sha() {}
-        PDFS_Dir(string DirName, char *SHA, PDFS_Dir *PrePath)
-        {
-            dirname = DirName;
-            prePath = PrePath;
-            memcpy(sha, SHA, 32);
-        }
+        filename = "";
+        filetype = "";
 
-        void setDirName(string DirName) { dirname = DirName; }
-        void setSHA(char *SHA) { memcpy(sha, SHA, 32); }
-        void setPrePath(PDFS_Dir *PrePath) { prePath = PrePath; }
-        PDFS_Dir *getPrePath() { return prePath; }
-        string getDirName() { return dirname; }
-        const char *getSHA() { return sha; }
-        map<string, PDFS_Dir *> getDirInfo() { return ListDir; }
-        map<string, PDFS_File *> getFileInfo() { return ListFile; }
+        if (pos == -1)
+            filename = RawFileName,
+                    filetype = "unknow";
+        else
+            for (int i = 0; i < (int)RawFileName.length(); i++)
+                if (i < pos)
+                    filename += RawFileName[i];
+                else if (i > pos)
+                    filetype += RawFileName[i];
 
-        RSC addFile(PDFS_File *File)
-        {
-            if (ListFile.find(File->getFileName()) != ListFile.end())
-                return run_FileExist;
-            ListFile[File->getFileName()] = File;
-            return run_NoError;
-        }
+        filesize = FileSize;
+        memcpy(sha, SHA, 32);
+    }
 
-        RSC addDir(PDFS_Dir *Dir)
-        {
-            if (ListDir.find(Dir->getDirName()) != ListDir.end())
-                return run_DirExist;
-            ListDir[Dir->getDirName()] = Dir;
-            return run_NoError;
-        }
+    void setFileName(QString FileName) { filename = FileName; }
+    void setFileType(QString FileType) { filetype = FileType; }
+    void setFileSize(size_t FileSize) { filesize = FileSize; }
+    void setSHAcode(char *SHA) { memcpy(sha, SHA, 32); }
+    void setFileInfo(QString RawFileName, size_t FileSize, char *SHA)
+    {
+        PDFS_File tempFile(RawFileName, FileSize, SHA);
+        *this = tempFile;
+    }
 
-        RSC delFile(PDFS_File *File)
-        {
-            if (ListFile.find(File->getFileName()) == ListFile.end())
-                return run_FileUnexist;
-            ListFile.erase(ListFile.find(File->getFileName()));
-            return run_NoError;
-        }
+    QString getFileName() { return filename; }
+    QString getFileType() { return filetype; }
+    size_t getFileSize() { return filesize; }
+    const char *getSHA() { return sha; }
+};
 
-        RSC delDir(PDFS_Dir *Dir)
-        {
-            if (ListDir.find(Dir->getDirName()) == ListDir.end())
-                return run_DirUnexist;
-            ListDir.erase(ListDir.find(Dir->getDirName()));
-            return run_NoError;
-        }
+class PDFS_Dir
+{
+private:
+    QMap<QString, PDFS_Dir *> ListDir;
+    QMap<QString, PDFS_File *> ListFile;
+    QString dirname;
+    PDFS_Dir *prePath;
+    char sha[32];
 
-        RSC delFile(string FileName)
-        {
-            if (ListFile.find(FileName) == ListFile.end())
-                return run_FileUnexist;
-            ListFile.erase(ListFile.find(FileName));
-            return run_NoError;
-        }
+public:
+    PDFS_Dir() : ListDir(), ListFile(), dirname(""), prePath(NULL), sha() {}
+    PDFS_Dir(QString DirName, char *SHA, PDFS_Dir *PrePath)
+    {
+        dirname = DirName;
+        prePath = PrePath;
+        memcpy(sha, SHA, 32);
+    }
 
-        RSC delDir(string DirName)
-        {
-            if (ListDir.find(DirName) == ListDir.end())
-                return run_DirUnexist;
-            ListDir.erase(ListDir.find(DirName));
-            return run_NoError;
-        }
-    };
+    void setDirInfo(QString RawFileName, char *SHA,PDFS_Dir *PrePath)
+    {
+        PDFS_Dir tempDir(RawFileName, SHA, PrePath);
+        *this = tempDir;
+    }
+    void setDirName(QString DirName) { dirname = DirName; }
+    void setSHA(char *SHA) { memcpy(sha, SHA, 32); }
+    void setPrePath(PDFS_Dir *PrePath) { prePath = PrePath; }
+    PDFS_Dir *getPrePath() { return prePath; }
+    QString getDirName() { return dirname; }
+    const char *getSHA() { return sha; }
+    QMap<QString, PDFS_Dir *> getDirInfo() { return ListDir; }
+    QMap<QString, PDFS_File *> getFileInfo() { return ListFile; }
+
+    RSC addFile(PDFS_File *File)
+    {
+        if (ListFile.find(File->getFileName()) != ListFile.end())
+            return run_FileExist;
+        ListFile[File->getFileName()] = File;
+        return run_NoError;
+    }
+
+    RSC addDir(PDFS_Dir *Dir)
+    {
+        if (ListDir.find(Dir->getDirName()) != ListDir.end())
+            return run_DirExist;
+        ListDir[Dir->getDirName()] = Dir;
+        return run_NoError;
+    }
+
+    RSC delFile(PDFS_File *File)
+    {
+        if (ListFile.find(File->getFileName()) == ListFile.end())
+            return run_FileUnexist;
+        ListFile.erase(ListFile.find(File->getFileName()));
+        return run_NoError;
+    }
+
+    RSC delDir(PDFS_Dir *Dir)
+    {
+        if (!ListDir.contains(Dir->getDirName()))
+            return run_DirUnexist;
+        ListDir.erase(ListDir.find(Dir->getDirName()));
+        return run_NoError;
+    }
+
+    RSC delFile(QString FileName)
+    {
+        if (!ListFile.contains(FileName))
+            return run_FileUnexist;
+        ListFile.erase(ListFile.find(FileName));
+        return run_NoError;
+    }
+
+    RSC delDir(QString DirName)
+    {
+        if (!ListDir.contains(DirName))
+            return run_DirUnexist;
+        ListDir.erase(ListDir.find(DirName));
+        return run_NoError;
+    }
+};
 };
 
 class PDFS_FileSystem
 {
 #define FIS file_inner_struct
 
-private:
+private://data
     FIS::PDFS_Dir *root;
     FIS::PDFS_Dir *now;
 
-    std::vector<std::string> path;
+    std::vector<QString> path;
 
-public:
-    PDFS_FileSystem() : root(new FIS::PDFS_Dir()) { now = root; };
-    std::string getPath()
+public://method
+    PDFS_FileSystem() : root(new FIS::PDFS_Dir()) { now = root; }
+    QString getPath()
     {
-        std::string fullPath;
+        QString fullPath="~";
         for (auto &&dir : path)
-            fullPath.append("\\").append(dir);
+            fullPath.append("/").append(dir);
+        qDebug("raw fullPath: %s",qPrintable(fullPath));
         return fullPath;
     }
-    std::vector<std::vector<std::string>> getFileTree()
+    std::vector<std::vector<QString>> getFileTree()
     {
-        std::vector<std::vector<std::string>> FileTree;
-        std::vector<std::string> FileInfo;
+        std::vector<std::vector<QString>> FileTree;
+        std::vector<QString> FileInfo;
+        FileInfo.clear();
+        FileInfo.push_back("..");
+        FileInfo.push_back("<PRE>");
+        FileInfo.push_back("-----");
+        FileTree.push_back(FileInfo);
         for (auto &&Ele : now->getDirInfo())
         {
             FileInfo.clear();
-            FileInfo.push_back(Ele.second->getDirName());
+            FileInfo.push_back(Ele->getDirName());
             FileInfo.push_back("<DIR>");
             FileInfo.push_back("-----");
             FileTree.push_back(FileInfo);
@@ -173,35 +186,106 @@ public:
         for (auto &&Ele : now->getFileInfo())
         {
             FileInfo.clear();
-            FileInfo.push_back(Ele.second->getFileName());
-            FileInfo.push_back(Ele.second->getFileType());
-            FileInfo.push_back(std::to_string(Ele.second->getFileSize()));
+            FileInfo.push_back(Ele->getFileName());
+            FileInfo.push_back(Ele->getFileType());
+            FileInfo.push_back(QString().fromStdString(std::to_string(Ele->getFileSize())));
             FileTree.push_back(FileInfo);
         }
         return FileTree;
     }
-    int addFile(std::string RawFileName, size_t FileSize, char *SHA)
+    int addFile(QString RawFileName, size_t FileSize, char *SHA)
     {
         FIS::PDFS_File *File = new FIS::PDFS_File(RawFileName, FileSize, SHA);
         return now->addFile(File);
     }
 
-    int addDir(std::string DirName, char *SHA)
+    int addDir(QString DirName, char *SHA)
     {
         FIS::PDFS_Dir *Dir = new FIS::PDFS_Dir(DirName, SHA, now);
+
         return now->addDir(Dir);
     }
 
     int delFile(FIS::PDFS_File *File) { return now->delFile(File); }
     int delDir(FIS::PDFS_Dir *Dir) { return now->delDir(Dir); }
-    int delFile(std::string FileName) { return now->delFile(FileName); }
-    int delDir(std::string DirName) { return now->delDir(DirName); }
-    int inPath(std::string DirName)
+    int delFile(QString FileName) { return now->delFile(FileName); }
+    int delDir(QString DirName) { return now->delDir(DirName); }
+
+    int inPath(QString DirName)
     {
-        if (now->getDirInfo().find(DirName) == now->getDirInfo().end())
+        auto dirInfo = now->getDirInfo();
+        if (!dirInfo.contains(DirName))
             return run_DirUnexist;
-        now = now->getDirInfo()[DirName];
+        path.push_back(DirName);
+        now = dirInfo[DirName];
         return run_NoError;
     }
-    void outPath() { now = now->getPrePath(); }
+
+    void outPath()
+    {
+        if(!path.empty())
+            path.pop_back();
+        if(now!=root)
+            now = now->getPrePath();
+    }
+
+public://converter
+    QList<QStringList> CtoQ_FileTree(std::vector<std::vector<QString>> tree)
+    {
+        QList<QStringList> ret;
+        QStringList ele;
+        for(auto &&dir:tree)
+        {
+            ele.clear();
+            for(auto &&info:dir)
+                ele.append(info);
+            ret.append(ele);
+        }
+        return ret;
+    }
+
+    std::vector<std::vector<QString>> QtoC_FileTree(QList<QStringList> tree)
+    {
+        std::vector<std::vector<QString>> ret;
+        std::vector<QString> ele;
+        for(auto &&dir:tree)
+        {
+            ele.clear();
+            for(auto &&info:dir)
+                ele.push_back(info);
+            ret.push_back(ele);
+        }
+        return ret;
+    }
+public://Debug
+
+    char * randSHA()
+    {
+        char *SHA=new char[32];
+        for(int i=0;i<32;i++)
+            SHA[i]=i;
+        return SHA;
+    }
+
+    void TEST()
+    {
+        srand(time(NULL));
+        for (int i = 0; i < 10; i++)
+        {
+            QString s;
+            s = "test:";
+            s += char('a' + i);
+            this->addDir(s, randSHA());
+            this->addFile(s + ".pdf", rand(), randSHA());
+        }
+        this->inPath("test:a");
+        for (int i = 0; i < 10; i++)
+        {
+            QString s;
+            s = "中文:";
+            s += char('a' + i);
+            this->addDir(s, randSHA());
+            this->addFile(s + ".txt", rand(), randSHA());
+        }
+    }
 };

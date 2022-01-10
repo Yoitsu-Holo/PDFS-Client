@@ -7,7 +7,7 @@
 #include <QDir>
 #include <QList>
 
-#include "pdfsfilesystemmodel.h"
+#include "PDFSFileSystem.cpp"
 #include "serverconnect.h"
 #include "loginheader.h"
 
@@ -22,16 +22,19 @@ class PDFS_Client : public QMainWindow
 private:
     QTcpSocket *Client;
     LoginHeader tcpHeader;
-    PDFSFileSystemModel *fileSystemModel;
+    PDFS_FileSystem *fileSystemModel;
 
 public:
     PDFS_Client(QWidget *parent = nullptr);
     ~PDFS_Client();
 
+    void refreshFileTree();
+
 private slots:
     void on_ServerConnect_clicked();
     void on_Login_clicked();
     void on_FileTree_itemClicked(QTreeWidgetItem *item, int column);
+    void on_FileTree_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
     Ui::PDFS_Client *ui;

@@ -6,6 +6,12 @@
 #define RunStateCode char
 #define RSC RunStateCode
 
+//word lenth
+#define username_end            20
+#define password_end            40
+#define key_end                 20
+#define keyLength               20
+
 //run code
 #define run_NoError             0
 #define run_UnknowError         1

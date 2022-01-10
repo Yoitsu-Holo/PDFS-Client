@@ -16,24 +16,26 @@ PDFS_Client::PDFS_Client(QWidget *parent)
     headerName.append("FileType");
     headerName.append("FileSize");
     ui->FileTree->setHeaderLabels(headerName);
-    QList<QTreeWidgetItem *> items;
-    qDebug("Hello");
+
+    fileSystemModel=new PDFS_FileSystem();
     fileSystemModel->TEST();
-    //QList<QStringList> fileStruct = fileSystemModel->GetFileSystemStruct();
-    //for (auto && fileEle:fileStruct)
-    for(int i=0;i<10;i++)
-    {
-        QStringList sl;
-        sl.append(QString("item: %1").arg(i));
-        sl.append(QString("item: %1").arg(i*10));
-        items.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), sl));
-    }
-    ui->FileTree->insertTopLevelItems(0,items);
+    refreshFileTree();
+    qDebug("Hello");
 }
 
 PDFS_Client::~PDFS_Client()
 {
     delete ui;
+}
+
+void PDFS_Client::refreshFileTree()
+{
+    QList<QTreeWidgetItem *> items;
+    QList<QStringList> fileStruct = fileSystemModel->CtoQ_FileTree(fileSystemModel->getFileTree());
+    for (auto && fileEle:fileStruct)
+        items.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), fileEle));
+    ui->FileTree->clear();
+    ui->FileTree->insertTopLevelItems(0,items);
 }
 
 void PDFS_Client::on_ServerConnect_clicked()
@@ -58,3 +60,16 @@ void PDFS_Client::on_FileTree_itemClicked(QTreeWidgetItem *item, int column)
 {
     ui->DebugInfo->append("user clicked dir:    " + item->data(0,0).toString());
 }
+
+void PDFS_Client::on_FileTree_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    ui->DebugInfo->append("user double clicked dir:    " + item->data(0,0).toString());
+
+    if(item->data(1,0).toString()=="<DIR>")
+        fileSystemModel->inPath(item->data(0,0).toString());
+    if(item->data(1,0).toString()=="<PRE>")
+        fileSystemModel->outPath();
+    ui->DLPath->setText(fileSystemModel->getPath());
+    refreshFileTree();
+}
+
