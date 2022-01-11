@@ -27,15 +27,17 @@
 #define error_IllegalPort       2
 
 //op code
-#define opCode_NoError          0
+#define opCode_noError          0
 #define opCode_CreateUser       1
 #define opCode_DeleteUser       2
 #define opCode_ChangePassword   3
-#define opCode_WriteFile        4
-#define opCode_ReadFile         5
-#define opCode_deleteFile       6
-#define opCode_CreatePath       7
-#define opCode_DeletePath       8
+#define opCode_Login            4
+#define opCode_WriteFile        5
+#define opCode_ReadFile         6
+#define opCode_deleteFile       7
+#define opCode_CreatePath       8
+#define opCode_DeletePath       9
+#define opCode_ServerExtend     127
 #define opCode_RequestDir       255
 
 //state code

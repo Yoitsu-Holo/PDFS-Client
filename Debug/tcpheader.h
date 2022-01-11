@@ -1,35 +1,39 @@
-#ifndef LOGINHEADER_H
-#define LOGINHEADER_H
+#ifndef TCPHEADER_H
+#define TCPHEADER_H
 
 #include <QString>
 #include <QBitArray>
 
 #include "protocol.h"
 
-class LoginHeader
+class Header
 {
 public:
-    LoginHeader();
+    Header();
 
 private:
     char op;
     char key[keyLength];
     QString userName;
     QString password;
+    QString extend;
     QByteArray header;
     QString rawHeader;
+    bool keyHeaderReady;
+    bool userHeaderReady;
 
-    bool headerReady;
 public:
     void set_op(int Op);
     void set_UserName(QString UserName);
     void set_Password( QString Password);
-    QByteArray get_Header();
-    QString get_RawHeader();
+    QByteArray get_UserHeader();
+    QByteArray get_KeyHeader();
+    QString get_RawUserHeader();
+    QString get_RawKeyHeader();
 
 private:
     void rebuildKeyHeader();
-    void rebuildLoginHeader();
+    void rebuildUserHeader();
 };
 
-#endif // LOGINHEADER_H
+#endif // TCPHEADER_H

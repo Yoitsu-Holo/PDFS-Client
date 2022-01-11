@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>500</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -40,14 +40,14 @@
        <widget class="QLineEdit" name="ServerHost"/>
       </item>
       <item>
-       <widget class="QLabel" name="SState">
+       <widget class="QLabel" name="SPort">
         <property name="text">
-         <string>State:</string>
+         <string>SPort:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="ServerState">
+       <widget class="QLineEdit" name="ServerPort">
         <property name="maximumSize">
          <size>
           <width>80</width>
@@ -103,7 +103,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="UserName"/>
+           <widget class="QLineEdit" name="UserName">
+            <property name="maxLength">
+             <number>20</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -129,7 +133,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="Password"/>
+           <widget class="QLineEdit" name="Password">
+            <property name="maxLength">
+             <number>20</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -137,6 +145,20 @@
          <widget class="QPushButton" name="Login">
           <property name="text">
            <string>Login</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="Register">
+          <property name="text">
+           <string>Register</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="DeleteUser">
+          <property name="text">
+           <string>DeleteUser</string>
           </property>
          </widget>
         </item>

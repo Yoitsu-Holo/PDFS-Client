@@ -9,7 +9,7 @@
 
 #include "PDFSFileSystem.cpp"
 #include "serverconnect.h"
-#include "loginheader.h"
+#include "tcpheader.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class PDFS_Client; }
@@ -20,21 +20,24 @@ class PDFS_Client : public QMainWindow
     Q_OBJECT
 
 private:
-    QTcpSocket *Client;
-    LoginHeader tcpHeader;
+    ServerConnect *server;
+    Header tcpHeader;
     PDFS_FileSystem *fileSystemModel;
 
 public:
     PDFS_Client(QWidget *parent = nullptr);
     ~PDFS_Client();
-
-    void refreshFileTree();
+    void SendUserMsg();
+    void SendNomalMsg();
+    void RefreshFileTree();
 
 private slots:
+    void onServerReturned();
     void on_ServerConnect_clicked();
     void on_Login_clicked();
     void on_FileTree_itemClicked(QTreeWidgetItem *item, int column);
     void on_FileTree_itemDoubleClicked(QTreeWidgetItem *item, int column);
+    void on_Register_clicked();
 
 private:
     Ui::PDFS_Client *ui;

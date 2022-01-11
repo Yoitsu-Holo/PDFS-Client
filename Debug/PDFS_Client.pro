@@ -12,19 +12,19 @@ CONFIG += c++11
 SOURCES += \
     PDFSFileSystem.cpp \
     ligin.cpp \
-    loginheader.cpp \
     logout.cpp \
     main.cpp \
     pdfs_client.cpp \
-    serverconnect.cpp
+    serverconnect.cpp \
+    tcpheader.cpp
 
 HEADERS += \
     login.h \
-    loginheader.h \
     logout.h \
     pdfs_client.h \
     protocol.h \
-    serverconnect.h
+    serverconnect.h \
+    tcpheader.h
 
 FORMS += \
     pdfs_client.ui
