@@ -7,10 +7,12 @@
 #define RSC RunStateCode
 
 //word lenth
-#define username_end            20
-#define password_end            40
-#define key_end                 20
-#define keyLength               20
+#define opPart_1                20
+#define opPart_2                40
+#define opPart_3                60
+#define Length_Username         20
+#define Length_Password         20
+#define Length_Key              20
 
 //run code
 #define run_NoError             0

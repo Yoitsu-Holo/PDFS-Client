@@ -21,14 +21,16 @@ class PDFS_Client : public QMainWindow
 
 private:
     ServerConnect *server;
-    Header tcpHeader;
     PDFS_FileSystem *fileSystemModel;
+    Header *tcpHeader;
+    QByteArray Key;
 
 public:
     PDFS_Client(QWidget *parent = nullptr);
     ~PDFS_Client();
     void SendUserMsg();
     void SendNomalMsg();
+    void SendDelMsg();
     void RefreshFileTree();
 
 private slots:
@@ -38,6 +40,8 @@ private slots:
     void on_FileTree_itemClicked(QTreeWidgetItem *item, int column);
     void on_FileTree_itemDoubleClicked(QTreeWidgetItem *item, int column);
     void on_Register_clicked();
+
+    void on_DeleteUser_clicked();
 
 private:
     Ui::PDFS_Client *ui;

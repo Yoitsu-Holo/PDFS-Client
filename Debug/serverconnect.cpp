@@ -13,9 +13,10 @@ QString ServerConnect::ConnectTest(QString host)
     return host;
 }
 
-void ServerConnect::ConnectServer(QString host,QString port)
+void ServerConnect::ConnectServer(QString host,unsigned short port)
 {
-    tcpClient->connectToHost(host,port.toUShort());
+    tcpClient->connectToHost(host,port);
+    qDebug("try to connect::%s:%d",qPrintable(host),port);
 }
 
 void ServerConnect::SendMsg(QByteArray msg)

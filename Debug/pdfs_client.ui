@@ -42,7 +42,7 @@
       <item>
        <widget class="QLabel" name="SPort">
         <property name="text">
-         <string>SPort:</string>
+         <string>Port:</string>
         </property>
        </widget>
       </item>

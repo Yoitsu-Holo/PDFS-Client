@@ -6,83 +6,109 @@ Header::Header()
     this->header.clear();
     this->password.clear();
     this->userName.clear();
+    this->key.clear();
     this->userHeaderReady=false;
     this->keyHeaderReady=false;
-    memset(key,0x0,sizeof(key));
+    this->delHeaderReady=false;
+    key.resize(20);
 }
 
 void Header::set_op(int Op)
 {
-    userHeaderReady=keyHeaderReady=false;
+    userHeaderReady=keyHeaderReady=delHeaderReady=false;
     op=Op;
 }
 
 void Header::set_UserName(QString UserName)
 {
-    userHeaderReady=false;
+    userHeaderReady=delHeaderReady=false;
     userName=UserName;
 }
 
 void Header::set_Password(QString Password)
 {
-    userHeaderReady=false;
+    userHeaderReady=delHeaderReady=false;
     password=Password;
+}
+
+void Header::set_Key(QByteArray Key)
+{
+    if(Key.length()==20)
+        key=Key;
 }
 
 QByteArray Header::get_UserHeader()
 {
-    if(!userHeaderReady)
-    {
-        userHeaderReady=true;
-        keyHeaderReady=false;
-        rebuildUserHeader();
-    }
+    rebuildUserHeader();
     return header;
 }
 
 QByteArray Header::get_KeyHeader()
 {
-    if(!keyHeaderReady)
-    {
-        userHeaderReady=false;
-        keyHeaderReady=true;
-        rebuildKeyHeader();
-    }
+    rebuildKeyHeader();
     return header;
 }
 
-QString Header::get_RawUserHeader()
+QByteArray Header::get_DelHeader()
 {
-    rebuildUserHeader();
-    return rawHeader;
-}
-
-QString Header::get_RawKeyHeader()
-{
-    rebuildKeyHeader();
-    return rawHeader;
+    rebuildDelHeader();
+    return header;
 }
 
 void Header::rebuildKeyHeader()
 {
-    rawHeader.clear();
-    rawHeader.append(op);
-    for(int i=0;i<keyLength;i++)
-        rawHeader.append(key[i]);
-    rawHeader.append(key);
-    header = rawHeader.toLatin1();
+    if(!keyHeaderReady)
+    {
+        qDebug("rebuild key");
+
+        userHeaderReady=false;
+        keyHeaderReady=true;
+        delHeaderReady=false;
+
+        header.clear();
+        header.append(op);
+        for(auto &&keyEle:key)
+            header.append(keyEle);
+        header.append(key);
+    }
 }
 
 void Header::rebuildUserHeader()
 {
-    rawHeader.clear();
-    rawHeader.append(op);
-    rawHeader.append(userName);
+    if(!userHeaderReady)
+    {
+        qDebug("rebuild user");
 
-    while(rawHeader.size()<=username_end)
-        rawHeader.push_back(QChar(0));
-    rawHeader.append(password);
-    while(rawHeader.size()<=password_end)
-        rawHeader.push_back(QChar(0));
-    header = rawHeader.toLatin1();
+        userHeaderReady=true;
+        keyHeaderReady=false;
+        delHeaderReady=false;
+
+        header.clear();
+        header.append(op);
+        header.append(userName.toLatin1());
+
+        while(header.size()<=opPart_1)
+            header.append(char(0));
+        header.append(password.toLatin1());
+        while(header.size()<=opPart_2)
+            header.append(char(0));
+    }
+}
+
+void Header::rebuildDelHeader()
+{
+    if(!delHeaderReady)
+    {
+        qDebug("rebuild del");
+        userHeaderReady=false;
+        keyHeaderReady=false;
+        delHeaderReady=true;
+
+        header.clear();
+        header.append(op);
+        header.append(key);
+        header.append(password.toLatin1());
+        while(header.length()<=opPart_2)
+            header.append(char(0));
+    }
 }

@@ -16,7 +16,7 @@ private:
 public:
     ServerConnect();
     QString ConnectTest(QString host);
-    void ConnectServer(QString host,QString port);
+    void ConnectServer(QString host,unsigned short port);
     void SendMsg(QByteArray msg);
     QByteArray GetServerMsg();
 
