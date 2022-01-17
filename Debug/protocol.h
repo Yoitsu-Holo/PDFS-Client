@@ -36,22 +36,35 @@
 #define opCode_Login            4
 #define opCode_WriteFile        5
 #define opCode_ReadFile         6
-#define opCode_deleteFile       7
+#define opCode_DeleteFile       7
 #define opCode_CreatePath       8
 #define opCode_DeletePath       9
 #define opCode_ServerExtend     127
 #define opCode_RequestDir       255
 
 //state code
-#define stCode_Seccess          0
-#define stCode_UnknowError      1
-#define stCode_FileUnexist      2
-#define stCode_PathUnexist      3
-#define stCode_ErrorPassword    4
-#define stCode_UserExisted      5
-#define stCode_UserUnexist      6
-#define stCode_ParameterError   7
-#define stCode_OpUnexist        8
+#define stCode_Undefined            0
+#define stCode_CreateUser           1
+#define stCode_UserExist            2
+#define stCode_DeleteUser           3
+#define stCode_DeleteUserPWDFail    4
+#define stCode_ChangePWD            5
+#define stCode_ChangePWDFile        6
+#define stCode_LoginSucceed         7
+#define stCode_UserUnexist          8
+#define stCode_LoginPWDError        9
+#define stCode_UploadSucceed        10
+#define stCode_DownloadReturn       11
+#define stCode_FileUnexist          12
+#define stCode_DeleteFileSucceed    13
+#define stCode_ShearchFileFailed    14
+#define stCode_PathCreateSucceed    15
+#define stCode_PathExist            16
+#define stCode_PathDeleteSucceed    17
+#define stCode_PathUnexist          18
+#define stCode_PermissionDenied     19
+#define stCode_ServerExtendSucceed  127
+#define stCode_GetFileTreeSucceed   255
 
 //server returned code
 #define svReturn_seccess        0

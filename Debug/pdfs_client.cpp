@@ -23,7 +23,7 @@ PDFS_Client::PDFS_Client(QWidget *parent)
     headerName.append("FileSize");
     ui->FileTree->setHeaderLabels(headerName);
 
-    fileSystemModel->TEST();
+    //fileSystemModel->TEST();
     RefreshFileTree();
     connect(server,SIGNAL(serverReturned()),this,SLOT(onServerReturned()));
 }

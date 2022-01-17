@@ -13,7 +13,6 @@ SOURCES += \
     PDFSFileSystem.cpp \
     download.cpp \
     ligin.cpp \
-    logout.cpp \
     main.cpp \
     pdfs_client.cpp \
     serverconnect.cpp \
@@ -22,8 +21,6 @@ SOURCES += \
 
 HEADERS += \
     download.h \
-    login.h \
-    logout.h \
     pdfs_client.h \
     protocol.h \
     serverconnect.h \
