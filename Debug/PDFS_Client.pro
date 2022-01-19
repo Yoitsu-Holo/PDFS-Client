@@ -12,7 +12,6 @@ CONFIG += c++11
 SOURCES += \
     PDFSFileSystem.cpp \
     download.cpp \
-    ligin.cpp \
     main.cpp \
     pdfs_client.cpp \
     serverconnect.cpp \
@@ -34,3 +33,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    protocal.md

@@ -18,9 +18,6 @@ private:
     QString password;
     QString extend;
     QByteArray header;
-    bool userHeaderReady;
-    bool keyHeaderReady;
-    bool delHeaderReady;
 
 public:
     void set_op(int Op);

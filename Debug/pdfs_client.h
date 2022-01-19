@@ -6,6 +6,7 @@
 #include <QTreeWidgetItem>
 #include <QDir>
 #include <QList>
+#include <QMessageBox>
 
 #include "PDFSFileSystem.cpp"
 #include "serverconnect.h"
@@ -28,10 +29,9 @@ private:
 public:
     PDFS_Client(QWidget *parent = nullptr);
     ~PDFS_Client();
-    void SendUserMsg();
-    void SendNomalMsg();
-    void SendDelMsg();
     void RefreshFileTree();
+    void RequestFileTree(QString Path);
+    void BuildFileTree(QByteArray dirInfo);
 
 private slots:
     void onServerReturned();
@@ -40,8 +40,9 @@ private slots:
     void on_FileTree_itemClicked(QTreeWidgetItem *item, int column);
     void on_FileTree_itemDoubleClicked(QTreeWidgetItem *item, int column);
     void on_Register_clicked();
-
     void on_DeleteUser_clicked();
+
+    void on_UpLoad_clicked();
 
 private:
     Ui::PDFS_Client *ui;
