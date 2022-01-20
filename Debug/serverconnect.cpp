@@ -26,9 +26,22 @@ void ServerConnect::SendMsg(QByteArray msg)
     tcpClient->write(msg);
 }
 
+void ServerConnect::SendMsg(QByteArray msg,size_t len)
+{
+    //msg.append("\n");
+    qDebug("msg sended");
+    tcpClient->write(msg,len);
+}
+
 QByteArray ServerConnect::GetServerMsg()
 {
     return ServerReturnedMsg;
+}
+
+void ServerConnect::Close()
+{
+    tcpClient->disconnectFromHost();
+    tcpClient->close();
 }
 
 void ServerConnect::onConnected()

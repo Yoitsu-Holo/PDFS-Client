@@ -18,6 +18,8 @@ public:
     QString ConnectTest(QString host);
     void ConnectServer(QString host,unsigned short port);
     void SendMsg(QByteArray msg);
+    void SendMsg(QByteArray msg,size_t len);
+    void Close();
     QByteArray GetServerMsg();
 
 public slots:

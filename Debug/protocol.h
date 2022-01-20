@@ -36,8 +36,8 @@
 #define opCode_DeleteUser       2
 #define opCode_ChangePassword   3
 #define opCode_Login            4
-#define opCode_WriteFile        5
-#define opCode_ReadFile         6
+#define opCode_SendFile         5
+#define opCode_DownloadFile     6
 #define opCode_DeleteFile       7
 #define opCode_CreatePath       8
 #define opCode_DeletePath       9

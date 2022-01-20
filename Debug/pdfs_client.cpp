@@ -9,14 +9,13 @@ PDFS_Client::PDFS_Client(QWidget *parent)
     fileSystemModel=new PDFS_FileSystem();
     tcpHeader = new Header();
     server=new ServerConnect();
-
     //    ui->ServerHost->setText("1.117.64.144");
     ui->ServerHost->setText("43.154.178.243");
     ui->ServerPort->setText("9999");
     ui->UserName->setText("YoitsuHolo");
     ui->Password->setText("YoitsuHolo");
     ui->FileTree->setColumnCount(3);
-    ui->ULPath->setText("C:/Users/YoitsuHolo/Desktop/账号密码.txt");
+    ui->ULPath->setText("C:/Users/YoitsuHolo/Desktop/YoitsuHolo.txt");
     //ui->FileTree->setColumnHidden(0,true);
     QList<QString> headerName;
     headerName.append("FileName");
@@ -179,12 +178,17 @@ void PDFS_Client::on_FileTree_itemDoubleClicked(QTreeWidgetItem *item, int colum
 void PDFS_Client::on_UpLoad_clicked()
 {
     QString path=ui->ULPath->text();
-    QFile uploadFile(path);
-    if(!uploadFile.exists())
+    QFile *uploadFile=new QFile(path);
+    if(!uploadFile->exists())
+    {
         QMessageBox::warning(this,"文件不存在",QString("文件不存在"));
-    if(!uploadFile.open(QIODevice::ReadOnly))
+        return;
+    }
+    if(!uploadFile->open(QIODevice::ReadOnly))
+    {
         QMessageBox::warning(this,"文件不可读",QString("文件不可读"));
-
-    ui->DebugInfo->append(uploadFile.readAll().toHex());
+        return;
+    }
+    new UpLoad(ui->ServerHost->text(),ui->ServerPort->text().toUShort(),uploadFile,"/",tcpHeader);
 }
 

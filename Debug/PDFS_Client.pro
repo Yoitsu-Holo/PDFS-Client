@@ -1,5 +1,5 @@
 QT += core gui
-QT += core
+#QT += core
 QT += network
 QT += core5compat
 

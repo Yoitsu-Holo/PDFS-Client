@@ -12,6 +12,7 @@
 #include "PDFSFileSystem.cpp"
 #include "serverconnect.h"
 #include "tcpheader.h"
+#include "upload.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class PDFS_Client; }
@@ -26,6 +27,7 @@ private:
     PDFS_FileSystem *fileSystemModel;
     Header *tcpHeader;
     QByteArray Key;
+    UpLoad *uploadSocket;
 
 public:
     PDFS_Client(QWidget *parent = nullptr);
@@ -42,7 +44,6 @@ private slots:
     void on_FileTree_itemDoubleClicked(QTreeWidgetItem *item, int column);
     void on_Register_clicked();
     void on_DeleteUser_clicked();
-
     void on_UpLoad_clicked();
 
 private:
