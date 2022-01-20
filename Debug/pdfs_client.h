@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QList>
 #include <QMessageBox>
+#include <QTextcodec>
 
 #include "PDFSFileSystem.cpp"
 #include "serverconnect.h"

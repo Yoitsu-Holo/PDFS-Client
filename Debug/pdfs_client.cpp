@@ -53,18 +53,20 @@ void PDFS_Client::RequestFileTree(QString Path)
     server->SendMsg(temp);
 }
 
+//建立文件树
 void PDFS_Client::BuildFileTree(QByteArray dirInfo)
 {
     ui->DebugInfo->append(dirInfo.toHex());
     int num=dirInfo.front();
     int pos=1;
+    QTextCodec *coding=QTextCodec::codecForName("UTF8");
     for(int i=1;i<=num;i++)
     {
         int FileType=dirInfo[pos++];
         int FileNameLen=dirInfo[pos++];
         QString FileName;
-        for(int j=1;j<=FileNameLen;j++)
-            FileName.append(dirInfo[pos++]);
+        FileName=coding->toUnicode(dirInfo.mid(pos,FileNameLen));
+        pos+=FileNameLen;
         switch(FileType)
         {
         case 1:
@@ -181,7 +183,8 @@ void PDFS_Client::on_UpLoad_clicked()
     if(!uploadFile.exists())
         QMessageBox::warning(this,"文件不存在",QString("文件不存在"));
     if(!uploadFile.open(QIODevice::ReadOnly))
-        QMessageBox::warning(this,"不可读",QString("不可读"));
+        QMessageBox::warning(this,"文件不可读",QString("文件不可读"));
+
     ui->DebugInfo->append(uploadFile.readAll().toHex());
 }
 
