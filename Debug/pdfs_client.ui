@@ -158,7 +158,7 @@
         <item>
          <widget class="QPushButton" name="DeleteUser">
           <property name="text">
-           <string>DeleteUser</string>
+           <string>GetFileTree</string>
           </property>
          </widget>
         </item>

@@ -48,13 +48,6 @@ void PDFS_Client::RequestFileTree(QString Path)
 {
     tcpHeader->set_op(opCode_RequestDir);
     QByteArray temp=tcpHeader->get_KeyHeader();
-    short len=Path.length();
-    for(int i=1;i<=2;i++)
-    {
-        temp.append(len%236);
-        len/=256;
-    }
-
     temp.append(Path.toLatin1());
     ui->DebugInfo->append("out:"+temp.toHex());
     server->SendMsg(temp);
@@ -63,6 +56,25 @@ void PDFS_Client::RequestFileTree(QString Path)
 void PDFS_Client::BuildFileTree(QByteArray dirInfo)
 {
     ui->DebugInfo->append(dirInfo.toHex());
+    int num=dirInfo.front();
+    int pos=1;
+    for(int i=1;i<=num;i++)
+    {
+        int FileType=dirInfo[pos++];
+        int FileNameLen=dirInfo[pos++];
+        QString FileName;
+        for(int j=1;j<=FileNameLen;j++)
+            FileName.append(dirInfo[pos++]);
+        switch(FileType)
+        {
+        case 1:
+            fileSystemModel->addFile(FileName,0);
+            break;
+        case 2:
+            fileSystemModel->addDir(FileName);
+            break;
+        }
+    }
 }
 
 //服务器相应
@@ -137,18 +149,16 @@ void PDFS_Client::on_Register_clicked()
     server->SendMsg(tcpHeader->get_UserHeader());
 }
 
-void PDFS_Client::on_DeleteUser_clicked()
+void PDFS_Client::on_DeleteUser_clicked()   //临时测试
 {
-    tcpHeader->set_op(opCode_DeleteUser);
-    ui->DebugInfo->append("Hex Header:\n" + tcpHeader->get_DelHeader().toHex()+"\n");
-    server->SendMsg(tcpHeader->get_DelHeader());
+    RequestFileTree("/");
+//    tcpHeader->set_op(opCode_DeleteUser);
+//    ui->DebugInfo->append("Hex Header:\n" + tcpHeader->get_DelHeader().toHex()+"\n");
+//    server->SendMsg(tcpHeader->get_DelHeader());
 }
 
 void PDFS_Client::on_FileTree_itemClicked(QTreeWidgetItem *item, int column)
 {
-    server->ConnectServer(ui->ServerHost->text(),ui->ServerPort->text().toUShort());
-    RequestFileTree("/");
-    qDebug("fk");
     ui->DebugInfo->append("user clicked dir:    " + item->data(0,0).toString());
 }
 

@@ -21,7 +21,7 @@ void ServerConnect::ConnectServer(QString host,unsigned short port)
 
 void ServerConnect::SendMsg(QByteArray msg)
 {
-    msg.append("\n");
+    //msg.append("\n");
     qDebug("msg sended");
     tcpClient->write(msg);
 }

@@ -19,7 +19,7 @@
 #define Length_Password         20
 #define Length_Key              20
 
-//run code
+//客户端运行内部状态码
 #define run_NoError             0
 #define run_UnknowError         1
 #define run_IllegalInput        2
@@ -27,13 +27,10 @@
 #define run_DirExist            4
 #define run_FileUnexist         5
 #define run_DirUnexist          6
+#define run_IllegalIp           7
+#define run_IllegalPort         8
 
-//error code
-#define noError                 0
-#define error_IllegalIp         1
-#define error_IllegalPort       2
-
-//op code
+//请求op代码
 #define opCode_noError          0
 #define opCode_CreateUser       1
 #define opCode_DeleteUser       2
@@ -47,7 +44,7 @@
 #define opCode_ServerExtend     127
 #define opCode_RequestDir       255
 
-//state code
+//服务器返回的请求状态码
 #define stCode_Undefined            0
 #define stCode_CreateUserSucceed    1
 #define stCode_UserExist            2
@@ -75,7 +72,7 @@
 #define stCode_OK                   255
 
 
-//server returned code
+//服务器内部交流代码，与客户端无关
 #define svReturn_seccess        0
 #define svReturn_UnknowError    1
 #define svReturn_FileUnexist    2

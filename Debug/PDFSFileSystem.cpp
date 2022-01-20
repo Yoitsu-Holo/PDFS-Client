@@ -16,15 +16,11 @@ private:
     QString filename;
     QString filetype;
     size_t filesize;
-    char sha[32];
 
 public:
-    PDFS_File() : filename(""), filetype(""), filesize(0), sha()
-    {
-        memset(sha, 0x0, sizeof(sha));
-    }
+    PDFS_File() : filename(""), filetype(""), filesize(0){}
 
-    PDFS_File(QString RawFileName, size_t FileSize, char *SHA)
+    PDFS_File(QString RawFileName, size_t FileSize)
     {
         int pos = RawFileName.length();
         for (pos--; pos >= 0; pos--)
@@ -45,23 +41,20 @@ public:
                     filetype += RawFileName[i];
 
         filesize = FileSize;
-        memcpy(sha, SHA, 32);
     }
 
     void setFileName(QString FileName) { filename = FileName; }
     void setFileType(QString FileType) { filetype = FileType; }
     void setFileSize(size_t FileSize) { filesize = FileSize; }
-    void setSHAcode(char *SHA) { memcpy(sha, SHA, 32); }
-    void setFileInfo(QString RawFileName, size_t FileSize, char *SHA)
+    void setFileInfo(QString RawFileName, size_t FileSize)
     {
-        PDFS_File tempFile(RawFileName, FileSize, SHA);
+        PDFS_File tempFile(RawFileName, FileSize);
         *this = tempFile;
     }
 
     QString getFileName() { return filename; }
     QString getFileType() { return filetype; }
     size_t getFileSize() { return filesize; }
-    const char *getSHA() { return sha; }
 };
 
 class PDFS_Dir
@@ -71,28 +64,24 @@ private:
     QMap<QString, PDFS_File *> ListFile;
     QString dirname;
     PDFS_Dir *prePath;
-    char sha[32];
 
 public:
-    PDFS_Dir() : ListDir(), ListFile(), dirname(""), prePath(NULL), sha() {}
-    PDFS_Dir(QString DirName, char *SHA, PDFS_Dir *PrePath)
+    PDFS_Dir() : ListDir(), ListFile(), dirname(""), prePath(NULL) {}
+    PDFS_Dir(QString DirName, PDFS_Dir *PrePath)
     {
         dirname = DirName;
         prePath = PrePath;
-        memcpy(sha, SHA, 32);
     }
 
-    void setDirInfo(QString RawFileName, char *SHA,PDFS_Dir *PrePath)
+    void setDirInfo(QString RawFileName,PDFS_Dir *PrePath)
     {
-        PDFS_Dir tempDir(RawFileName, SHA, PrePath);
+        PDFS_Dir tempDir(RawFileName, PrePath);
         *this = tempDir;
     }
     void setDirName(QString DirName) { dirname = DirName; }
-    void setSHA(char *SHA) { memcpy(sha, SHA, 32); }
     void setPrePath(PDFS_Dir *PrePath) { prePath = PrePath; }
     PDFS_Dir *getPrePath() { return prePath; }
     QString getDirName() { return dirname; }
-    const char *getSHA() { return sha; }
     QMap<QString, PDFS_Dir *> getDirInfo() { return ListDir; }
     QMap<QString, PDFS_File *> getFileInfo() { return ListFile; }
 
@@ -193,15 +182,15 @@ public://method
         }
         return FileTree;
     }
-    int addFile(QString RawFileName, size_t FileSize, char *SHA)
+    int addFile(QString RawFileName, size_t FileSize)
     {
-        FIS::PDFS_File *File = new FIS::PDFS_File(RawFileName, FileSize, SHA);
+        FIS::PDFS_File *File = new FIS::PDFS_File(RawFileName, FileSize);
         return now->addFile(File);
     }
 
-    int addDir(QString DirName, char *SHA)
+    int addDir(QString DirName)
     {
-        FIS::PDFS_Dir *Dir = new FIS::PDFS_Dir(DirName, SHA, now);
+        FIS::PDFS_Dir *Dir = new FIS::PDFS_Dir(DirName, now);
 
         return now->addDir(Dir);
     }
@@ -259,14 +248,6 @@ public://converter
     }
 public://Debug
 
-    char * randSHA()
-    {
-        char *SHA=new char[32];
-        for(int i=0;i<32;i++)
-            SHA[i]=i;
-        return SHA;
-    }
-
     void TEST()
     {
         srand(time(NULL));
@@ -275,8 +256,8 @@ public://Debug
             QString s;
             s = "test:";
             s += char('a' + i);
-            this->addDir(s, randSHA());
-            this->addFile(s + ".pdf", rand(), randSHA());
+            this->addDir(s);
+            this->addFile(s + ".pdf", rand());
         }
         this->inPath("test:a");
         for (int i = 0; i < 10; i++)
@@ -284,8 +265,8 @@ public://Debug
             QString s;
             s = "中文:";
             s += char('a' + i);
-            this->addDir(s, randSHA());
-            this->addFile(s + ".txt", rand(), randSHA());
+            this->addDir(s);
+            this->addFile(s + ".txt", rand());
         }
     }
 };

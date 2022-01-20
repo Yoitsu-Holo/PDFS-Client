@@ -182,6 +182,8 @@ pdfs的文件存储在pdfs项目下的namespace文件夹，namespace文件夹下
 | pathLength | [21,22]      | 路径长度，不超过short |
 | path       | [22+1,22+pathLength] | 路径   |
 
+服务器返回
+
 ## 2.4.错误码
 
 错误码仅在与master节点通信时有效，其仅表示逻辑错误，不表示数据错误
