@@ -81,6 +81,8 @@ void PDFS_Client::BuildFileTree(QByteArray dirInfo)
 //服务器相应
 void PDFS_Client::onServerReturned()
 {
+    auto download=[=](QFile *file,QByteArray msg){new Download(file,msg);};//使用lambda表达式创建下载
+
     QByteArray serverReturn = server->GetServerMsg();
     ui->DebugInfo->append("[res]:" + serverReturn.toHex() +"\n");
     int serverCode=(unsigned int) serverReturn.front();
@@ -115,6 +117,14 @@ void PDFS_Client::onServerReturned()
         RefreshFileTree();
         break;
     case stCode_DownloadReturn:     //下载请求返回成功
+        if(tempFile->exists())
+            ui->DebugInfo->append("[文件存在]"+tempFile->fileName());
+        else
+        {
+            ui->DebugInfo->append("[正在创建]"+tempFile->fileName());
+            tempFile->open(QIODevice::ReadWrite);
+        }
+        download(tempFile,serverReturn);
         break;
     case stCode_FileUnexist:        //文件不存在
         break;
@@ -153,24 +163,33 @@ void PDFS_Client::on_Register_clicked()
 void PDFS_Client::on_DeleteUser_clicked()   //临时测试
 {
     RequestFileTree("/");
-//    tcpHeader->set_op(opCode_DeleteUser);
-//    ui->DebugInfo->append("Hex Header:\n" + tcpHeader->get_DelHeader().toHex()+"\n");
-//    server->SendMsg(tcpHeader->get_DelHeader());
+    //    tcpHeader->set_op(opCode_DeleteUser);
+    //    ui->DebugInfo->append("Hex Header:\n" + tcpHeader->get_DelHeader().toHex()+"\n");
+    //    server->SendMsg(tcpHeader->get_DelHeader());
 }
 
 void PDFS_Client::on_FileTree_itemClicked(QTreeWidgetItem *item, int column)
 {
     ui->DebugInfo->append("user clicked dir:    " + item->data(0,0).toString());
+    QString fullPath=fileSystemModel->getPath();
+    if(item->data(1,0).toString()!="<DIR>" && item->data(1,0).toString()!="<PRE>")
+    {
+        fullPath+="/";
+        fullPath+=item->data(0,0).toString();
+        fullPath+=".";
+        fullPath+=item->data(1,0).toString();
+    }
+    ui->DLPath->setText(fullPath);
 }
 
 void PDFS_Client::on_FileTree_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     ui->DebugInfo->append("user double clicked dir:    " + item->data(0,0).toString());
-
     if(item->data(1,0).toString()=="<DIR>")
         fileSystemModel->inPath(item->data(0,0).toString());
-    if(item->data(1,0).toString()=="<PRE>")
+    else if(item->data(1,0).toString()=="<PRE>")
         fileSystemModel->outPath();
+
     ui->DLPath->setText(fileSystemModel->getPath());
     RefreshFileTree();
 }
@@ -189,6 +208,61 @@ void PDFS_Client::on_UpLoad_clicked()
         QMessageBox::warning(this,"文件不可读",QString("文件不可读"));
         return;
     }
-    new UpLoad(ui->ServerHost->text(),ui->ServerPort->text().toUShort(),uploadFile,"/",tcpHeader);
+    new Upload(ui->ServerHost->text(),ui->ServerPort->text().toUShort(),uploadFile,"/",tcpHeader);
+}
+
+void PDFS_Client::on_Download_clicked()
+{
+    //header.clear();
+    QString serverPath=ui->DLPath->text();
+    //ui->DLPath->setEnabled(false);
+    serverPath.remove(0,1);
+    QString localPath="D:/code/git/PDFS-Test/"+serverPath.split("/").back();
+
+    //分离文件名称和路径
+//    QStringList path=serverPath.split('/');
+//    QString FileName=path.back();
+//    path.pop_back();
+//    serverPath=path.join('/');
+//    serverPath.push_front('/');
+
+    ui->DebugInfo->append("Download File:"+serverPath);
+    //ui->DebugInfo->append("File:"+FileName);
+    tempFile = new QFile(localPath);
+    ui->DebugInfo->append("正在获取服务器数据");
+    QByteArray header;
+    tcpHeader->set_op(opCode_DownloadFile);
+    std::stringstream ss;
+
+    header.append(tcpHeader->get_KeyHeader());
+    //header.append(char(0)).append(char(serverPath.toUtf8().length()));
+    //header.append(char(serverPath.toUtf8().length()));
+    header.append(serverPath.toUtf8());
+    ui->DebugInfo->append(serverPath);
+
+//    header.append(FileName.toUtf8().length());
+//    header.append(FileName.toUtf8());
+
+    server->SendMsg(header);
+}
+
+void PDFS_Client::on_DebugSend_clicked()
+{
+    QString serverPath=ui->DLPath->text();
+    serverPath.remove(0,1);
+    ui->DebugInfo->append("delete"+serverPath);
+    QString content=ui->DebugCommand->text();
+    if(content == "deletefile")
+    {
+        QByteArray header;
+        header.append(opCode_DeleteFile).append(tcpHeader->get_KeyHeader()).append(serverPath.toLatin1());
+        server->SendMsg(header);
+    }
+    if(content == "createpath")
+    {
+        QByteArray header;
+        header.append(opCode_CreatePath).append(tcpHeader->get_KeyHeader()).append(serverPath.toLatin1());
+        server->SendMsg(header);
+    }
 }
 

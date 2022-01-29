@@ -254,16 +254,16 @@ public://Debug
         for (int i = 0; i < 10; i++)
         {
             QString s;
-            s = "test:";
+            s = "test=";
             s += char('a' + i);
             this->addDir(s);
             this->addFile(s + ".pdf", rand());
         }
-        this->inPath("test:a");
+        this->inPath("test=a");
         for (int i = 0; i < 10; i++)
         {
             QString s;
-            s = "中文:";
+            s = "中文=";
             s += char('a' + i);
             this->addDir(s);
             this->addFile(s + ".txt", rand());

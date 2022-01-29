@@ -2,15 +2,33 @@
 #define DOWNLOAD_H
 
 #include <QObject>
+#include <QFile>
+#include <QTcpSocket>
+#include <QQueue>
+#include <cstdio>
 
-class DownLoad : public QObject
+#include "protocol.h"
+
+class Download : public QObject
 {
     Q_OBJECT
+private:
+    size_t cnt;
+    char sha[40];
+    QFile *downloadFile;
+    QTcpSocket *downloadSocket;
+    QQueue<QPair<QString,QString>> serverTable;
+
 public:
-    DownLoad();
+    Download(QFile * DownloadFile,QByteArray RawMsg);
+    ~Download();
 
-signals:
+private slots:
+    void on_ServerConnected();
+    void on_ServerReturned();
 
+private:
+    void ServerConnect();
 };
 
 #endif // DOWNLOAD_H

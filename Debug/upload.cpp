@@ -1,49 +1,51 @@
 #include "upload.h"
 
-UpLoad::UpLoad(QString ServerHost,int ServerPort,QFile *file,QString Path,Header *header)
+Upload::Upload(QString ServerHost,int ServerPort,QFile *file,QString Path,Header *header)
 {
     UploadSocket=new QTcpSocket();
     UploadSocket->connectToHost(ServerHost,ServerPort);
     UploadFile=file;
-    FilePath=Path;
     FileName=UploadFile->fileName().split('/').back();
+    FilePath=Path+FileName;
     tcpHeader=header;
 
     //建立型号与槽
-    connect(UploadSocket,&QTcpSocket::connected,this,&UpLoad::on_ServerConnected);
-    connect(UploadSocket,&QTcpSocket::disconnected,this,&UpLoad::on_ServerConnectionLose);
-    connect(this,&UpLoad::ServerConnected,this,&UpLoad::on_SendHeader);
-    connect(UploadSocket,&QTcpSocket::readyRead,this,&UpLoad::on_ServerReturned);
+    connect(UploadSocket,&QTcpSocket::connected,this,&Upload::on_ServerConnected);
+    connect(UploadSocket,&QTcpSocket::disconnected,this,&Upload::on_ServerConnectionLose);
+    connect(this,&Upload::ServerConnected,this,&Upload::on_SendHeader);
+    connect(UploadSocket,&QTcpSocket::readyRead,this,&Upload::on_ServerReturned);
 }
 
-UpLoad::~UpLoad()
+Upload::~Upload()
 {
 }
 
-void UpLoad::on_ServerConnected()
+void Upload::on_ServerConnected()
 {
     emit this->ServerConnected();
 }
 
-void UpLoad::on_ServerConnectionLose()
+void Upload::on_ServerConnectionLose()
 {
     emit this->ServerConnectionLose();
 }
 
-void UpLoad::on_SendHeader()
+void Upload::on_SendHeader()
 {
     //发送头
     QByteArray header;
     tcpHeader->set_op(opCode_SendFile);
     header.append(tcpHeader->get_KeyHeader());
-    header.append(char(0)).append(char(FilePath.length()));
+    //header.append(char(0)).append(char(FilePath.length()));
     header.append(FilePath.toLatin1());
-    //header.append(FileName.length());
-    header.append(FileName.toUtf8());
+//    header.append("/");
+//    //header.append(FileName.length());
+    //header.append(FileName.toUtf8());
+    qDebug("--> %s:%s",qPrintable(FilePath),qPrintable(FileName));
     UploadSocket->write(header);
 }
 
-void UpLoad::on_SendFile()
+void Upload::on_SendFile()
 {
     //发送文件
     FileSize=UploadFile->size();//文件大小
@@ -61,10 +63,10 @@ void UpLoad::on_SendFile()
     UploadSocket->close();
     qDebug("文件发送完成");
     emit this->FileSendFinish();
-    this->~UpLoad();
+    this->~Upload();
 }
 
-void UpLoad::on_ServerReturned()
+void Upload::on_ServerReturned()
 {
     QByteArray serverReturn=UploadSocket->readAll();
     qDebug()<<serverReturn.toHex();

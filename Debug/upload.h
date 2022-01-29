@@ -10,7 +10,7 @@
 #include "protocol.h"
 #include "tcpheader.h"
 
-class UpLoad : public QObject
+class Upload : public QObject
 {
     Q_OBJECT
 private:
@@ -25,8 +25,8 @@ private:
     Header *tcpHeader;
 
 public:
-    UpLoad(QString ServerHost,int ServerPort,QFile *file,QString Path,Header *header);
-    ~UpLoad();
+    Upload(QString ServerHost,int ServerPort,QFile *file,QString Path,Header *header);
+    ~Upload();
 
 public slots:
     void on_ServerConnected();
