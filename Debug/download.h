@@ -14,7 +14,7 @@ class Download : public QObject
     Q_OBJECT
 private:
     size_t cnt;
-    char sha[40];
+    char sha[64];
     QFile *downloadFile;
     QTcpSocket *downloadSocket;
     QQueue<QPair<QString,QString>> serverTable;

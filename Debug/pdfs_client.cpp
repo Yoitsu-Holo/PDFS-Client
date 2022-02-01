@@ -124,11 +124,18 @@ void PDFS_Client::onServerReturned()
             ui->DebugInfo->append("[正在创建]"+tempFile->fileName());
             tempFile->open(QIODevice::ReadWrite);
         }
+        tempFile->open(QIODevice::ReadWrite);
         download(tempFile,serverReturn);
         break;
     case stCode_FileUnexist:        //文件不存在
         break;
     case stCode_UploadSucceed:      //上传成功
+        break;
+    case stCode_DeleteFileSucceed:
+        QMessageBox::warning(this,"Title",QString("删除文件成功"));
+        break;
+    case stCode_PathCreateSucceed:
+        QMessageBox::warning(this,"Title",QString("创建文件夹成功"));
         break;
     default:
         QMessageBox::information(this,"Title",QString("未定义操作：")+QString::number(serverCode));
@@ -250,19 +257,22 @@ void PDFS_Client::on_DebugSend_clicked()
 {
     QString serverPath=ui->DLPath->text();
     serverPath.remove(0,1);
-    ui->DebugInfo->append("delete"+serverPath);
+    ui->DebugInfo->append("delete: "+serverPath);
     QString content=ui->DebugCommand->text();
+    QByteArray header;
     if(content == "deletefile")
     {
-        QByteArray header;
-        header.append(opCode_DeleteFile).append(tcpHeader->get_KeyHeader()).append(serverPath.toLatin1());
+
+        tcpHeader->set_op(opCode_DeleteFile);
+        header.append(tcpHeader->get_KeyHeader()).append(serverPath.toLatin1());
         server->SendMsg(header);
     }
     if(content == "createpath")
     {
-        QByteArray header;
-        header.append(opCode_CreatePath).append(tcpHeader->get_KeyHeader()).append(serverPath.toLatin1());
+        tcpHeader->set_op(opCode_CreatePath);
+        header.append(tcpHeader->get_KeyHeader()).append(serverPath.toLatin1());
         server->SendMsg(header);
     }
+    ui->DebugInfo->append(header.toHex());
 }
 

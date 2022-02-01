@@ -52,7 +52,7 @@ void ServerConnect::onConnected()
 
 void ServerConnect::onDisconnected()
 {
-    qDebug("connect lose");
+    qDebug("main connect lose");
     emit serverLose();
 }
 

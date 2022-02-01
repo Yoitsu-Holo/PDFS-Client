@@ -18,8 +18,8 @@ private:
     //QTimer Timer;           //计时器
     QFile *UploadFile;       //上传的文件
     char buf[4*1024];       //文件缓冲区 4K
-    size_t sendSize=0;      //已发送文件大小
     size_t FileSize;        //文件大小
+    qint64 len;             //缓存的文件大小
     QString FilePath;       //目标文件路径
     QString FileName;
     Header *tcpHeader;
@@ -34,6 +34,7 @@ public slots:
     void on_SendFile();
     void on_ServerConnectionLose();
     void on_ServerReturned();
+    void on_SendSize(qint64 sendSize);
 
 signals:
     void ServerConnectionLose();
