@@ -9,6 +9,10 @@
 #include <QMessageBox>
 #include <QTextcodec>
 
+#include <istream>
+#include <ostream>
+#include <string>
+
 #include "PDFSFileSystem.cpp"
 #include "serverconnect.h"
 #include "tcpheader.h"

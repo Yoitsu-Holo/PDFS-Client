@@ -8,6 +8,7 @@ Upload::Upload(QString ServerHost,int ServerPort,QFile *file,QString Path,Header
     FileName=UploadFile->fileName().split('/').back();
     FilePath=Path+FileName;
     tcpHeader=header;
+    bufSize=64*1024;
 
     //建立型号与槽
     connect(UploadSocket,&QTcpSocket::connected,this,&Upload::on_ServerConnected);
@@ -43,22 +44,18 @@ void Upload::on_SendHeader()
 
 void Upload::on_SendSize(qint64 sentSize)
 {
-    qDebug()<<"sned:"<<sentSize;
-    if(sentSize==len)
-        on_SendFile();
-}
-
-void Upload::on_SendFile()
-{
-    //发送文件
-    FileSize=UploadFile->size();//文件大小
-    qDebug("文件发送开始");
-    memset(buf,0x0,sizeof(buf));
-    len=UploadFile->read(buf,sizeof(buf));
-    UploadSocket->write(buf,len);
-
-    //文件发送结束
-    if(len==0)
+    m_SentSize-=sentSize;
+    emit proccess((int)((m_FileSize-m_SentSize)*100/m_FileSize));
+    qDebug()<<"sned:"<<sentSize <<" | last: "<<m_SentSize;
+    if(m_SentSize)
+    {
+        //发送文件
+        qDebug("文件发送64K");
+        outBlock=UploadFile->read(qMin(m_SentSize,bufSize));
+        UploadSocket->write(outBlock);
+        outBlock.resize(0);
+    }
+    else //文件发送结束
     {
         UploadFile->close();
         UploadSocket->disconnectFromHost();
@@ -75,7 +72,10 @@ void Upload::on_ServerReturned()
     qDebug()<<"server return : "<<serverReturn.toHex();
     if(serverReturn[0]==char(255))
     {
+        m_SentSize=m_FileSize=UploadFile->size();
         connect(UploadSocket,&QTcpSocket::bytesWritten,this,&Upload::on_SendSize);
-        on_SendFile();
+        QDataStream sendOut(&outBlock,QIODevice::WriteOnly);
+        sendOut.setVersion(QDataStream::Qt_6_2);
+        on_SendSize(0);
     }
 }

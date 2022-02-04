@@ -9,7 +9,6 @@ PDFS_Client::PDFS_Client(QWidget *parent)
     fileSystemModel=new PDFS_FileSystem();
     tcpHeader = new Header();
     server=new ServerConnect();
-    //    ui->ServerHost->setText("1.117.64.144");
     ui->ServerHost->setText("43.154.178.243");
     ui->ServerPort->setText("9999");
     ui->UserName->setText("YoitsuHolo");
@@ -215,7 +214,10 @@ void PDFS_Client::on_UpLoad_clicked()
         QMessageBox::warning(this,"文件不可读",QString("文件不可读"));
         return;
     }
-    new Upload(ui->ServerHost->text(),ui->ServerPort->text().toUShort(),uploadFile,"/",tcpHeader);
+    Upload* up=new Upload(ui->ServerHost->text(),ui->ServerPort->text().toUShort(),uploadFile,"/",tcpHeader);
+    ui->UploadProgress->setRange(0,100);
+    ui->UploadProgress->setValue(0);
+    connect(up,&Upload::proccess,ui->UploadProgress,&QProgressBar::setValue);
 }
 
 void PDFS_Client::on_Download_clicked()
@@ -226,13 +228,6 @@ void PDFS_Client::on_Download_clicked()
     serverPath.remove(0,1);
     QString localPath="D:/code/git/PDFS-Test/"+serverPath.split("/").back();
 
-    //分离文件名称和路径
-//    QStringList path=serverPath.split('/');
-//    QString FileName=path.back();
-//    path.pop_back();
-//    serverPath=path.join('/');
-//    serverPath.push_front('/');
-
     ui->DebugInfo->append("Download File:"+serverPath);
     //ui->DebugInfo->append("File:"+FileName);
     tempFile = new QFile(localPath);
@@ -242,13 +237,10 @@ void PDFS_Client::on_Download_clicked()
     std::stringstream ss;
 
     header.append(tcpHeader->get_KeyHeader());
-    //header.append(char(0)).append(char(serverPath.toUtf8().length()));
-    //header.append(char(serverPath.toUtf8().length()));
+
     header.append(serverPath.toUtf8());
     ui->DebugInfo->append(serverPath);
 
-//    header.append(FileName.toUtf8().length());
-//    header.append(FileName.toUtf8());
 
     server->SendMsg(header);
 }

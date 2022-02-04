@@ -7,6 +7,10 @@
 #include <QQueue>
 #include <cstdio>
 
+#include <istream>
+#include <ostream>
+#include <string>
+
 #include "protocol.h"
 
 class Download : public QObject
@@ -26,6 +30,7 @@ public:
 private slots:
     void on_ServerConnected();
     void on_ServerReturned();
+    void on_ServerLose();
 
 private:
     void ServerConnect();
